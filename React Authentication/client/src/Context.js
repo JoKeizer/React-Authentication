@@ -5,6 +5,12 @@ const Context = React.createContext();
 
 export class Provider extends Component {
 
+  //If authenticatedUser is null (there is no authenticated user), we'll display the default header. Otherwise, we'll display the user name in the header in a "Welcome" message alongside a "Sign Out" link.
+  state = {
+    authenticatedUser: null
+
+  }
+
   //Initialize a new instance of the Data class
   constructor() {
     super();
@@ -12,14 +18,21 @@ export class Provider extends Component {
 
   }
 
-
-
 // The Provider lives at the top level of the app, and will allow its 
 // child components to gain access to context.  
 render() {
+  //destructuring assignment to extract authenticatedUser from this.state:
+  const { authenticatedUser } = this.state;
+
   //pass the date to value
+  //Pass the signIn Function to the Provider
+  //Pass state to <Context.Provider> by adding the authenticatedUser variable to the value object:
   const value = {
+    authenticatedUser,
     data: this.data,
+    actions: { // Add the 'actions' property and object
+    signIn: this.signIn
+  }
   };
     return (
       <Context.Provider value={value}>
@@ -28,8 +41,20 @@ render() {
     );
   }
 
-  
-  signIn = async () => {
+  //The signIn function is an asynchronous function that takes a username and password as arguments. 
+  // signIn uses those credentials to call the getUser() method in Data.js, which makes a GET request to the protected /users route on the server and returns the user data.
+
+  signIn = async (username, password) => {
+    const user = await this.data.getUser(username, password);
+
+    if (user !== null) {
+      this.setState(() => {
+        return {
+          authenticatedUser: user,
+        };
+      });
+    }
+    return user;
 
   }
 

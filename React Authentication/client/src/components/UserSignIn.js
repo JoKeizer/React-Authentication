@@ -62,11 +62,37 @@ export default class UserSignIn extends Component {
     });
   }
 
+  //destructuring props and state
+
   submit = () => {
+    const { context } = this.props;
+    const { username, password } = this.state;
+  
+    //Call the signIn() function, which you can access via the destructured context variable. 
+    // In Context.js, you passed Context.Provider a value prop whose value was an object with an actions property. The signIn() function provided to the UserSignIn component is available via context.actions.signIn:
+
+    context.actions.signIn(username, password)
+    .then( user => {
+      //If the returned promise value is null, set the errors state of the UserSignIn class to an array which holds the string 'Sign-in was unsuccessful' (this will be the validation message displayed to the user):
+      if (user === null) {
+        this.setState(() => {
+          return { errors: [ 'Sign-in was unsuccessful' ] };
+        });
+      } else {
+        this.props.history.push('/authenticated');
+        console.log(`SUCCESS! ${username} is now signed in!`);
+
+      }
+    })
+    .catch( err => {
+      console.log(err);
+      this.props.history.push('/error');
+    })
 
   }
 
   cancel = () => {
-
+    //To accomplish the redirect, we'll once again use history. In the body of the cancel function push the root path ('/') onto the history stack:
+    this.props.history.push('/');
   }
 }

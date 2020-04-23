@@ -112,9 +112,7 @@ export default class UserSignUp extends Component {
   }
 
   cancel = () => {
-
     //To accomplish the redirect, we'll once again use history. In the body of the cancel function push the root path ('/') onto the history stack:
     this.props.history.push('/');
-
   }
 }

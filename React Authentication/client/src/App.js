@@ -5,6 +5,10 @@ import {
   Switch
 } from 'react-router-dom';
 
+//Set up the Private Route
+import PrivateRoute from './PrivateRoute';
+
+
 import Header from './components/Header';
 import Public from './components/Public';
 import NotFound from './components/NotFound';
@@ -19,17 +23,20 @@ import withContext from './Context';
 // This connects the UserSignUp component to context. In other words, 
 // UserSignUp is now a consuming component that's subscribed to all context changes.
 const UserSignUpWithContext = withContext(UserSignUp);
-
+// Connect UserSignIn to context
+const UserSignInWithContext = withContext(UserSignIn);
+const HeaderWithContext = withContext(Header);
+const AuthWithContext = withContext(Authenticated);
 
 export default () => (
   <Router>
     <div>
-      <Header />
-
+      <HeaderWithContext />
+      
       <Switch>
         <Route exact path="/" component={Public} />
-        <Route path="/authenticated" component={Authenticated} />
-        <Route path="/signin" component={UserSignIn} />
+        <PrivateRoute path="/authenticated" component={AuthWithContext} />
+        <Route path="/signin" component={UserSignInWithContext} />
         <Route path="/signup" component={UserSignUpWithContext} />
         <Route path="/signout" component={UserSignOut} />
         <Route component={NotFound} />
